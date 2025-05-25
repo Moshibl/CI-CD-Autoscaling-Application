@@ -1,5 +1,5 @@
 ---
-- name: Jenkins Slave Setup
+- name: Backend-Setup
   become: true
   hosts: Backend
   roles:

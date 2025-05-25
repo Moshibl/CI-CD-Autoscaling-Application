@@ -28,9 +28,9 @@ pipeline {
           def dns = tfOutput['EXT_DNS'].value
           echo "App is running at: ${dns}"
         }
-      }}
+      }
   }
-
+  }
   post {
       always {
           echo 'Cleaning up...'

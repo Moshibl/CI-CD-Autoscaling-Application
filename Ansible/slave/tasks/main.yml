@@ -15,7 +15,7 @@
   ansible.builtin.copy:
     src: "../Scripts/TF-Outputs.json"
     dest: "/home/ubuntu/TF-Outputs.json"
-    mode: "0400"
+    mode: "0644"
     owner: ubuntu
     group: ubuntu
 
