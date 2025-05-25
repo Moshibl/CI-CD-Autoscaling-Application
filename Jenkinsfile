@@ -27,12 +27,6 @@ pipeline {
       }
     }
 
-    stage('Checking If TF-Outputs Exists') {
-      steps {
-          sh 'ls'
-      }
-    }
-
     stage('Print Load Balancer DNS') {
       steps {
         script {
