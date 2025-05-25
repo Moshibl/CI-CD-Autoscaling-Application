@@ -1,0 +1,5 @@
+---
+- name: Jenkins Master Setup
+  hosts: Master
+  roles:
+    - master

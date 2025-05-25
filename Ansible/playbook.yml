@@ -1,0 +1,6 @@
+---
+- name: Jenkins Slave Setup
+  become: true
+  hosts: Slave
+  roles:
+    - slave

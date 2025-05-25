@@ -1,0 +1,56 @@
+---
+- name: Update APT package list
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Copy the SSH private key to the slave
+  ansible.builtin.copy:
+    src: "/home/mohamed/.ssh/Key"
+    dest: "/home/ubuntu/.ssh/Key"
+    mode: "0400"
+    owner: ubuntu
+    group: ubuntu
+
+- name: Copy the Terraform Outputs to the slave
+  ansible.builtin.copy:
+    src: "../Scripts/TF-Outputs.json"
+    dest: "/home/ubuntu/TF-Outputs.json"
+    mode: "0400"
+    owner: ubuntu
+    group: ubuntu
+
+- name: Create jenkins directory
+  file:
+    path: "/home/ubuntu/jenkins"
+    state: directory
+    mode: "0755"
+    owner: ubuntu
+    group: ubuntu
+
+- name: Install OpenJDK
+  ansible.builtin.apt:
+    name:
+      - openjdk-21-jre
+    state: present
+
+- name: Install Docker
+  ansible.builtin.apt:
+    name: docker.io
+    state: present
+
+- name: Install Ansible 
+  ansible.builtin.apt:
+    name: ansible
+    state: present
+
+- name: Add Jenkins user to Docker group
+  user:
+    name: jenkins
+    groups: docker
+    append: yes
+
+- name: Start and enable Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes

@@ -1,0 +1,7 @@
+[Master]
+bastion
+[Slave]
+slave
+[Backend]
+10.0.6.141
+10.0.5.249

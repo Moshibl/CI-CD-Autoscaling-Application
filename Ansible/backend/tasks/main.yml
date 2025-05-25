@@ -1,0 +1,39 @@
+---
+- name: Update APT package list
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Disable Host Nginx
+  ansible.buitlin.sysvinit:
+    name: nginx
+    state: stopped
+    enabled: false
+
+- name: Ensure Docker is installed
+  command: docker --version
+  register: docker_installed
+  failed_when: docker_installed.rc != 0
+  changed_when: false
+
+- name: Remove old LandingPage image if exists
+  command: docker image rm {{ image_name }}:latest
+  ignore_errors: yes
+
+- name: Pull latest old LandingPage image
+  command: docker pull {{ image_name }}:latest
+
+- name: Stop running container (if exists)
+  command: docker stop LandingPage
+  ignore_errors: yes
+
+- name: Remove existing container (if exists)
+  command: docker rm LandingPage
+  ignore_errors: yes
+
+- name: Run new container from updated image
+  command: >
+    docker run -d
+    --name LandingPage
+    -p 80:80
+    --restart always
+    {{ image_name }}:latest

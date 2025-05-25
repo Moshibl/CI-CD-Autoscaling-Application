@@ -1,0 +1,37 @@
+---
+- name: Update APT package list
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Copy the SSH private key to the Master
+  ansible.builtin.copy:
+    src: "/home/mohamed/.ssh/Key"
+    dest: "/home/ubuntu/.ssh/Key"
+    mode: "0400"
+    owner: ubuntu
+    group: ubuntu
+
+- name: Install OpenJDK
+  ansible.builtin.apt:
+    name:
+      - fontconfig 
+      - openjdk-21-jre
+    state: present
+
+- name: Add Jenkins GPG key
+  ansible.builtin.get_url:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+    dest: /etc/apt/keyrings/jenkins-keyring.asc
+    mode: '0644'
+
+- name: Add Jenkins APT repository
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/jenkins.list
+    content: |
+      deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/
+
+- name: Install Jenkins
+  ansible.builtin.apt:
+    name: jenkins
+    state: present
+    update_cache: yes
