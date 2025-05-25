@@ -11,9 +11,9 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'Docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
           sh '''
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-            docker build -t landing_page .
-            docker tag landing_page mohamedshibl/landing_page:latest
-            docker push mohamedshibl/landing_page:latest
+            sudo docker build -t landing_page .
+            sudo docker tag landing_page mohamedshibl/landing_page:latest
+            sudo docker push mohamedshibl/landing_page:latest
           '''
         }
       }
