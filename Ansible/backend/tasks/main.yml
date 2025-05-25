@@ -4,7 +4,7 @@
     update_cache: yes
 
 - name: Disable Host Nginx
-  ansible.buitlin.sysvinit:
+  ansible.builtin.sysvinit:
     name: nginx
     state: stopped
     enabled: false
