@@ -3,6 +3,12 @@
   ansible.builtin.apt:
     update_cache: yes
 
+- name: Install Docker
+  ansible.builtin.apt:
+    name: docker.io
+    state: present
+    update_cache: yes
+
 - name: Disable Host Nginx
   ansible.builtin.sysvinit:
     name: nginx
