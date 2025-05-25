@@ -15,25 +15,25 @@
   failed_when: docker_installed.rc != 0
   changed_when: false
 
-- name: Remove old LandingPage image if exists
+- name: Remove old landing_page image if exists
   command: docker image rm {{ image_name }}:latest
   ignore_errors: yes
 
-- name: Pull latest old LandingPage image
+- name: Pull latest old landing_page image
   command: docker pull {{ image_name }}:latest
 
 - name: Stop running container (if exists)
-  command: docker stop LandingPage
+  command: docker stop landing_page
   ignore_errors: yes
 
 - name: Remove existing container (if exists)
-  command: docker rm LandingPage
+  command: docker rm landing_page
   ignore_errors: yes
 
 - name: Run new container from updated image
   command: >
     docker run -d
-    --name LandingPage
+    --name landing_page
     -p 80:80
     --restart always
     {{ image_name }}:latest
