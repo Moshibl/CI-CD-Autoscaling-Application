@@ -19,14 +19,6 @@
     owner: ubuntu
     group: ubuntu
 
-- name: Create jenkins directory
-  ansible.builtin.file:
-    path: "/home/ubuntu/jenkins"
-    state: directory
-    mode: "0755"
-    owner: ubuntu
-    group: ubuntu
-
 - name: Install OpenJDK
   ansible.builtin.apt:
     name:
@@ -48,10 +40,17 @@
     name: docker
     state: started
     enabled: yes
+    
+- name: Create jenkins directory
+  ansible.builtin.file:
+    path: "/home/ubuntu/jenkins"
+    state: directory
+    mode: "0755"
+    owner: ubuntu
+    group: ubuntu
 
 - name: Add Jenkins user to Docker group
-  ansible.builtin.user:
+  user:
     name: jenkins
     groups: docker
     append: yes
-

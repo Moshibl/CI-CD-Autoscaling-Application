@@ -143,9 +143,6 @@ module "Internal_ALB" {
 
 resource "null_resource" "Master_Startup" {
   depends_on = [module.ProxyAutoScaling, module.PrivateAutoScaling]
-  # triggers = {
-  #   master_ip = module.Master.EC2_PUB_IP
-  # }
   provisioner "local-exec" {
     command = <<EOT
       bash ${var.WorkDir}/Scripts/SSH-Config.sh "${module.KeyPair.Key_Path}"
@@ -165,21 +162,23 @@ resource "null_resource" "JumpServerScript" {
   }
 }
 
-resource "null_resource" "PrintAdminPassword" {
-  depends_on = [null_resource.JumpServerScript]
+# resource "null_resource" "PrintAdminPassword" {
+#   triggers = {
+#     KeyExists = module.KeyPair.Key_Name
+#   }
+#   depends_on = [null_resource.JumpServerScript]
 
-  connection {
-    type        = "ssh"
-    host        = module.Master.EC2_PUB_IP
-    user        = "ubuntu"
-    private_key = file("~/.ssh/Key")
-  }
+#   connection {
+#     type        = "ssh"
+#     host        = module.Master.EC2_PUB_IP
+#     user        = "ubuntu"
+#     private_key = file(pathexpand("~/.ssh/Key"))
+#   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "echo 'Printing Admin Password...'",
-      "sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
-    ]
-  }
-}
-
+#   provisioner "remote-exec" {
+#     inline = [
+#       "echo 'Printing Admin Password...'",
+#       "sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
+#     ]
+#   }
+# }

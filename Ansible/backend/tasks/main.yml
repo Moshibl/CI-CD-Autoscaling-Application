@@ -15,20 +15,20 @@
   failed_when: docker_installed.rc != 0
   changed_when: false
 
-- name: Remove old landing_page image if exists
+- name: Remove old landing_page image (if exists)
   ansible.builtin.command: docker image rm {{ image_name }}:latest
-  ignore_errors: yes
+  ignore_errors: true
 
-- name: Pull latest old landing_page image
+- name: Pull latest landing_page image
   ansible.builtin.command: docker pull {{ image_name }}:latest
 
 - name: Stop running container (if exists)
   ansible.builtin.command: docker stop landing_page
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Remove existing container (if exists)
   ansible.builtin.command: docker rm landing_page
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Disable Host Nginx
   ansible.builtin.service:
