@@ -32,14 +32,3 @@ resource "aws_autoscaling_group" "AutoScalingGroup" {
     propagate_at_launch = true
   }
 }
-
-data "aws_instances" "ASG_Instances" {
-  instance_tags = {
-    Role = var.ASG_Instance_Role
-  }
-
-  filter {
-    name   = "instance-state-name"
-    values = ["running"]
-  }
-}

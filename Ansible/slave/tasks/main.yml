@@ -20,7 +20,7 @@
     group: ubuntu
 
 - name: Create jenkins directory
-  file:
+  ansible.builtin.file:
     path: "/home/ubuntu/jenkins"
     state: directory
     mode: "0755"
@@ -44,13 +44,13 @@
     state: present
 
 - name: Add Jenkins user to Docker group
-  user:
+  ansible.builtin.user:
     name: jenkins
     groups: docker
     append: yes
 
 - name: Start and enable Docker service
-  service:
+  ansible.builtin.service:
     name: docker
     state: started
     enabled: yes

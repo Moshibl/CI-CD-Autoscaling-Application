@@ -19,6 +19,19 @@ pipeline {
       }
     }
 
+    stage('Refresh Inventory') {
+      steps {
+        dir('Scripts') {
+          withCredentials([usernamePassword(credentialsId: 'AWS-Creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+            sh '''
+            chmod 500 InventoryGen.sh
+            bash InventoryGen.sh
+            '''
+          }
+        }
+      }
+    }
+
     stage('Run Ansible Playbook') {
       steps {
         dir('Ansible') {

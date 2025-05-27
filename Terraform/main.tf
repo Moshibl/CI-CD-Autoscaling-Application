@@ -100,7 +100,7 @@ module "PrivateAutoScaling" {
   Instance_Type      = var.Instance_Type
   Key_Name           = var.Key_Name
   Security_Group_Ids = [module.SecurityGroups.Backend_SG]
-  UserData           = base64encode(file("./Modules/ASG/UserData/Backend.sh"))
+  # UserData           = base64encode(file("./Modules/ASG/UserData/Backend.sh"))
 
   ASG_Name          = var.PrivASG
   ASG_Instance_Name = var.PrivASG_Instance
@@ -143,12 +143,12 @@ module "Internal_ALB" {
 
 resource "null_resource" "Master_Startup" {
   depends_on = [module.ProxyAutoScaling, module.PrivateAutoScaling]
-  triggers = {
-    master_ip = module.Master.EC2_PUB_IP
-  }
+  # triggers = {
+  #   master_ip = module.Master.EC2_PUB_IP
+  # }
   provisioner "local-exec" {
     command = <<EOT
-      bash ${var.WorkDir}/Scripts/SSH-Config.sh ${module.KeyPair.Key_Path}
+      bash ${var.WorkDir}/Scripts/SSH-Config.sh "${module.KeyPair.Key_Path}"
       ANSIBLE_CONFIG=${var.WorkDir}/Ansible/ansible.cfg \
       ansible-playbook -i ${var.WorkDir}/Ansible/inventory ${var.WorkDir}/Ansible/master-playbook.yml
     EOT
@@ -160,7 +160,26 @@ resource "null_resource" "JumpServerScript" {
   provisioner "local-exec" {
     command = <<EOT
       bash ../Scripts/InventoryGen.sh
-      ansible-playbook -i ../Ansible/inventory ../Ansible/playbook.yml
+      ansible-playbook -i ../Ansible/inventory ../Ansible/slave-playbook.yml
     EOT
   }
 }
+
+resource "null_resource" "PrintAdminPassword" {
+  depends_on = [null_resource.JumpServerScript]
+
+  connection {
+    type        = "ssh"
+    host        = module.Master.EC2_PUB_IP
+    user        = "ubuntu"
+    private_key = file("~/.ssh/Key")
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "echo 'Printing Admin Password...'",
+      "sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
+    ]
+  }
+}
+

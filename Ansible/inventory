@@ -1,7 +1,7 @@
 [Master]
-bastion
+master
 [Slave]
 slave
 [Backend]
-10.0.5.91
-10.0.6.220
+10.0.6.8
+10.0.5.174

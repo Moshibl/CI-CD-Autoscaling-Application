@@ -9,35 +9,35 @@
     state: present
     update_cache: yes
 
-- name: Disable Host Nginx
-  ansible.builtin.sysvinit:
-    name: nginx
-    state: stopped
-    enabled: false
-
 - name: Ensure Docker is installed
-  command: docker --version
+  ansible.builtin.command: docker --version
   register: docker_installed
   failed_when: docker_installed.rc != 0
   changed_when: false
 
 - name: Remove old landing_page image if exists
-  command: docker image rm {{ image_name }}:latest
+  ansible.builtin.command: docker image rm {{ image_name }}:latest
   ignore_errors: yes
 
 - name: Pull latest old landing_page image
-  command: docker pull {{ image_name }}:latest
+  ansible.builtin.command: docker pull {{ image_name }}:latest
 
 - name: Stop running container (if exists)
-  command: docker stop landing_page
+  ansible.builtin.command: docker stop landing_page
   ignore_errors: yes
 
 - name: Remove existing container (if exists)
-  command: docker rm landing_page
+  ansible.builtin.command: docker rm landing_page
   ignore_errors: yes
 
+- name: Disable Host Nginx
+  ansible.builtin.service:
+    name: nginx
+    state: stopped
+    enabled: false
+
 - name: Run new container from updated image
-  command: >
+  ansible.builtin.command: >
     docker run -d
     --name landing_page
     -p 80:80

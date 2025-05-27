@@ -9,7 +9,7 @@ rm -f "$InventoryFile"
 
 {
   echo "[Master]"
-  echo bastion
+  echo master
 
   echo "[Slave]"
   echo slave
