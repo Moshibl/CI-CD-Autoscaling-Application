@@ -33,15 +33,21 @@
       - openjdk-21-jre
     state: present
 
+- name: Install Ansible 
+  ansible.builtin.apt:
+    name: ansible
+    state: present
+
 - name: Install Docker
   ansible.builtin.apt:
     name: docker.io
     state: present
 
-- name: Install Ansible 
-  ansible.builtin.apt:
-    name: ansible
-    state: present
+- name: Start and enable Docker service
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: yes
 
 - name: Add Jenkins user to Docker group
   ansible.builtin.user:
@@ -49,8 +55,3 @@
     groups: docker
     append: yes
 
-- name: Start and enable Docker service
-  ansible.builtin.service:
-    name: docker
-    state: started
-    enabled: yes
