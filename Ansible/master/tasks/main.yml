@@ -34,4 +34,3 @@
   ansible.builtin.apt:
     name: jenkins
     state: present
-    update_cache: yes

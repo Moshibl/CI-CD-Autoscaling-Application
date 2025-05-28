@@ -100,7 +100,6 @@ module "PrivateAutoScaling" {
   Instance_Type      = var.Instance_Type
   Key_Name           = var.Key_Name
   Security_Group_Ids = [module.SecurityGroups.Backend_SG]
-  # UserData           = base64encode(file("./Modules/ASG/UserData/Backend.sh"))
 
   ASG_Name          = var.PrivASG
   ASG_Instance_Name = var.PrivASG_Instance
@@ -138,7 +137,7 @@ module "Internal_ALB" {
 }
 
 # --------------------------------------------------
-# END
+# Ansible Playbook Triggers
 # --------------------------------------------------
 
 resource "null_resource" "Master_Startup" {
@@ -162,23 +161,6 @@ resource "null_resource" "JumpServerScript" {
   }
 }
 
-# resource "null_resource" "PrintAdminPassword" {
-#   triggers = {
-#     KeyExists = module.KeyPair.Key_Name
-#   }
-#   depends_on = [null_resource.JumpServerScript]
-
-#   connection {
-#     type        = "ssh"
-#     host        = module.Master.EC2_PUB_IP
-#     user        = "ubuntu"
-#     private_key = file(pathexpand("~/.ssh/Key"))
-#   }
-
-#   provisioner "remote-exec" {
-#     inline = [
-#       "echo 'Printing Admin Password...'",
-#       "sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
-#     ]
-#   }
-# }
+# --------------------------------------------------
+# END
+# --------------------------------------------------

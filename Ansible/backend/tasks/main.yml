@@ -9,32 +9,21 @@
     state: present
     update_cache: yes
 
-- name: Ensure Docker is installed
-  ansible.builtin.command: docker --version
-  register: docker_installed
-  failed_when: docker_installed.rc != 0
-  changed_when: false
-
-- name: Remove old landing_page image (if exists)
-  ansible.builtin.command: docker image rm {{ image_name }}:latest
-  ignore_errors: true
-
-- name: Pull latest landing_page image
-  ansible.builtin.command: docker pull {{ image_name }}:latest
-
-- name: Stop running container (if exists)
-  ansible.builtin.command: docker stop landing_page
-  ignore_errors: true
-
-- name: Remove existing container (if exists)
-  ansible.builtin.command: docker rm landing_page
-  ignore_errors: true
-
 - name: Disable Host Nginx
   ansible.builtin.service:
     name: nginx
     state: stopped
     enabled: false
+
+- name: Remove old app image and pull the new one
+  ansible.builtin.shell: |
+    docker image rm {{ image_name }}:latest && docker pull {{ image_name }}:latest
+  ignore_errors: true
+    
+- name: Stop and delete the old container
+  ansible.builtin.shell: |
+    docker stop landing_page && docker rm landing_page
+  ignore_errors: true
 
 - name: Run new container from updated image
   ansible.builtin.command: >

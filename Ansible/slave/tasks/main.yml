@@ -3,7 +3,7 @@
   ansible.builtin.apt:
     update_cache: yes
 
-- name: Copy the SSH private key to the slave
+- name: Transfer SSH private key to the slave
   ansible.builtin.copy:
     src: "/home/mohamed/.ssh/Key"
     dest: "/home/ubuntu/.ssh/Key"
@@ -11,7 +11,7 @@
     owner: ubuntu
     group: ubuntu
 
-- name: Copy the Terraform Outputs to the slave
+- name: Transfer Terraform Outputs to the slave
   ansible.builtin.copy:
     src: "../Scripts/TF-Outputs.json"
     dest: "/home/ubuntu/TF-Outputs.json"
@@ -19,27 +19,49 @@
     owner: ubuntu
     group: ubuntu
 
-- name: Install OpenJDK
+- name: Install Packages and Modules
   ansible.builtin.apt:
-    name:
-      - openjdk-21-jre
-    state: present
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+  loop:
+    - {name: "unzip", state: "present"}
+    - {name: "openjdk-21-jre", state: "present"}
+    - {name: "ansible", state: "present"}
+    - {name: "docker.io", state: "present"}
 
-- name: Install Ansible 
-  ansible.builtin.apt:
-    name: ansible
-    state: present
 
-- name: Install Docker
-  ansible.builtin.apt:
-    name: docker.io
-    state: present
+- name: Download AWS CLI
+  ansible.builtin.get_url:
+    url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+    dest: /tmp/awscliv2.zip
+    mode: '0644'
+    register: aws_exists
+
+- name: Unzip AWS CLI
+  ansible.builtin.unarchive:
+    src: /tmp/awscliv2.zip
+    dest: /tmp
+    remote_src: yes
+    when: aws_exists.changed == true
+
+- name: Install AWS CLI
+  become: true
+  ansible.builtin.command:
+    cmd: /tmp/aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
+    when: aws_exists.changed == true
+
 
 - name: Start and enable Docker service
   ansible.builtin.service:
     name: docker
     state: started
     enabled: yes
+
+- name: Add ubuntu user to Docker group
+  ansible.builtin.user:
+    name: ubuntu
+    groups: docker
+    append: yes
     
 - name: Create jenkins directory
   ansible.builtin.file:
@@ -48,9 +70,3 @@
     mode: "0755"
     owner: ubuntu
     group: ubuntu
-
-- name: Add Jenkins user to Docker group
-  user:
-    name: jenkins
-    groups: docker
-    append: yes

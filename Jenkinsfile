@@ -11,8 +11,8 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'Docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
           sh '''
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-            sudo docker build -t mohamedshibl/landing_page:latest .
-            sudo docker push mohamedshibl/landing_page:latest
+            docker build -t mohamedshibl/landing_page:latest .
+            docker push mohamedshibl/landing_page:latest
           '''
         }
       }
@@ -21,12 +21,13 @@ pipeline {
     stage('Refresh Inventory') {
       steps {
         dir('Scripts') {
-          withCredentials([usernamePassword(credentialsId: 'AWS-Creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-            sh '''
-            chmod 500 InventoryGen.sh
-            bash InventoryGen.sh
-            '''
-          }
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',credentialsId: 'AWS-Creds']]) {
+              sh '''
+                chmod 500 InventoryGen.sh
+                bash InventoryGen.sh
+                cat ../Ansible/inventory
+              '''
+            }
         }
       }
     }
