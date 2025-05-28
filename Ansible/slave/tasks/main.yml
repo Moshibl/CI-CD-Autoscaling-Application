@@ -50,7 +50,6 @@
     cmd: /tmp/aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
     when: aws_exists.changed == true
 
-
 - name: Start and enable Docker service
   ansible.builtin.service:
     name: docker
