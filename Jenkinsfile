@@ -25,7 +25,6 @@ pipeline {
               sh '''
                 chmod 500 InventoryGen.sh
                 bash InventoryGen.sh
-                cat ../Ansible/inventory
               '''
             }
         }

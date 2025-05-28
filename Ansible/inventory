@@ -1,7 +1,0 @@
-[Master]
-master
-[Slave]
-slave
-[Backend]
-10.0.5.235
-10.0.6.222
