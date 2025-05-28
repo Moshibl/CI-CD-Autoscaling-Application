@@ -52,14 +52,11 @@ pipeline {
   }
 
   post {
-    always {
-      echo 'Cleaning up...'
-    }
     success {
-      echo 'Pipeline executed successfully!'
+      slackSend channel: '#cicd-notifications', color: "good", message: "✅ ${env.JOB_NAME} Build has completed Successfully: #${env.BUILD_NUMBER}"
     }
     failure {
-      echo 'Pipeline failed.'
+      slackSend channel: '#cicd-notifications', color: "danger", message: "❌ ${env.JOB_NAME} Build Failed: #${env.BUILD_NUMBER}"
     }
   }
 }
